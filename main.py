@@ -12,10 +12,11 @@ from settings import (
     SCREEN_WIDTH, SCREEN_HEIGHT, FPS, WINDOW_TITLE, COLORS,
     SPORTS_CAR, TRUCK
 )
-from controls import PLAYER1_CONTROLS, PLAYER2_CONTROLS, PHYSICS_CONTROLS
+from controls import PLAYER1_CONTROLS, PLAYER2_CONTROLS
 from track import Track
 from car import Car
 from game_settings import game_settings
+from settings_interface import settings_interface
 
 
 class RacingGame:
@@ -74,30 +75,15 @@ class RacingGame:
             offset_pos = (start_positions[0][0], start_positions[0][1] + 30)
             self.cars.append(Car(offset_pos, TRUCK))
             print(f"Player 2 (Truck) created at {offset_pos}")
+        
+        # Set cars for the settings interface
+        settings_interface.set_cars(self.cars)
     
     def _handle_events(self) -> None:
-        """Handle pygame events including physics adjustments."""
+        """Handle pygame events."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-            
-            elif event.type == pygame.KEYDOWN:
-                # Physics adjustment controls (affect Player 1 car)
-                if len(self.cars) > 0:
-                    car = self.cars[0]  # Player 1 car
-                    
-                    if event.key == PHYSICS_CONTROLS['increase_turn_speed']:
-                        car.adjust_physics('turn_speed', True)
-                    elif event.key == PHYSICS_CONTROLS['decrease_turn_speed']:
-                        car.adjust_physics('turn_speed', False)
-                    elif event.key == PHYSICS_CONTROLS['increase_acceleration']:
-                        car.adjust_physics('acceleration', True)
-                    elif event.key == PHYSICS_CONTROLS['decrease_acceleration']:
-                        car.adjust_physics('acceleration', False)
-                    elif event.key == PHYSICS_CONTROLS['increase_stickiness']:
-                        game_settings.adjust_stickiness(True)
-                    elif event.key == PHYSICS_CONTROLS['decrease_stickiness']:
-                        game_settings.adjust_stickiness(False)
         
         # Get currently pressed keys for continuous movement
         keys_pressed = pygame.key.get_pressed()
@@ -134,8 +120,7 @@ class RacingGame:
         instructions = [
             "Player 1: WASD to move (S to reverse)",
             "Player 2: Arrow keys to move (↓ to reverse)",
-            "U/J: Adjust turn speed | I/K: Adjust acceleration",
-            "O/L: Adjust wall stickiness",
+            "Settings: Check console for CLI interface!",
         ]
         
         for i, instruction in enumerate(instructions):
@@ -148,51 +133,73 @@ class RacingGame:
             stats_text = [
                 f"P1 Turn Speed: {car.turn_speed:.2f}",
                 f"P1 Acceleration: {car.acceleration:.2f}",
+                f"P1 Max Speed: {car.max_speed:.2f}",
                 f"P1 Reversing: {'Yes' if car.is_reversing else 'No'}",
+            ]
+            
+            for i, stat in enumerate(stats_text):
+                if i == 3 and car.is_reversing:
+                    color = COLORS['RED']
+                else:
+                    color = COLORS['YELLOW']
+                text_surface = font.render(stat, True, color)
+                self.screen.blit(text_surface, (10, 120 + i * 30))
+        
+        # Show Player 2 stats
+        if len(self.cars) > 1:
+            car2 = self.cars[1]
+            stats_text = [
+                f"P2 Acceleration: {car2.acceleration:.2f}",
+                f"P2 Max Speed: {car2.max_speed:.2f}",
+                f"P2 Reversing: {'Yes' if car2.is_reversing else 'No'}",
                 f"Wall Stickiness: {game_settings.wall_stickiness:.2f}",
             ]
             
             for i, stat in enumerate(stats_text):
-                if i == 2 and car.is_reversing:
+                if i == 2 and car2.is_reversing:
                     color = COLORS['RED']
                 elif i == 3:
                     color = COLORS['GREEN']
                 else:
-                    color = COLORS['YELLOW']
+                    color = COLORS['BLUE']
                 text_surface = font.render(stat, True, color)
-                self.screen.blit(text_surface, (10, 150 + i * 30))
-        
-        # Show reverse status for Player 2
-        if len(self.cars) > 1:
-            car2 = self.cars[1]
-            if car2.is_reversing:
-                text_surface = font.render("P2 Reversing: Yes", True, COLORS['RED'])
-                self.screen.blit(text_surface, (10, 270))
+                self.screen.blit(text_surface, (10, 250 + i * 30))
     
     def run(self) -> None:
         """Run the main game loop."""
         print("Starting Racing Game...")
-        print("Controls:")
+        print("=" * 50)
+        print("🎮 GAME CONTROLS:")
         print("  Player 1: WASD (S for reverse)")
         print("  Player 2: Arrow Keys (↓ for reverse)")
-        print("  U/J: Adjust Player 1 turn speed")
-        print("  I/K: Adjust Player 1 acceleration")
-        print("  O/L: Adjust wall stickiness")
+        print()
+        print("🎛️  CLI SETTINGS INTERFACE:")
+        print("  Use the console below to adjust settings in real-time!")
+        print("  Navigation: ↑/↓ to select, ←/→ to adjust, 'q' to quit settings")
+        print("=" * 50)
         print("Cars start facing up. White lights indicate reverse gear.")
+        print()
         
-        while self.running:
-            # Handle events and input
-            self._handle_events()
-            
-            # Render everything
-            self._render()
-            
-            # Control frame rate
-            self.clock.tick(FPS)
+        # Start the settings interface
+        settings_interface.start()
         
-        # Cleanup
-        pygame.quit()
-        sys.exit()
+        try:
+            while self.running:
+                # Handle events and input
+                self._handle_events()
+                
+                # Render everything
+                self._render()
+                
+                # Control frame rate
+                self.clock.tick(FPS)
+        finally:
+            # Stop the settings interface
+            settings_interface.stop()
+            
+            # Cleanup
+            pygame.quit()
+            sys.exit()
 
 
 def main() -> None:
