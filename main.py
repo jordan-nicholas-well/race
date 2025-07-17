@@ -15,6 +15,7 @@ from settings import (
 from controls import PLAYER1_CONTROLS, PLAYER2_CONTROLS, PHYSICS_CONTROLS
 from track import Track
 from car import Car
+from game_settings import game_settings
 
 
 class RacingGame:
@@ -93,6 +94,10 @@ class RacingGame:
                         car.adjust_physics('acceleration', True)
                     elif event.key == PHYSICS_CONTROLS['decrease_acceleration']:
                         car.adjust_physics('acceleration', False)
+                    elif event.key == PHYSICS_CONTROLS['increase_stickiness']:
+                        game_settings.adjust_stickiness(True)
+                    elif event.key == PHYSICS_CONTROLS['decrease_stickiness']:
+                        game_settings.adjust_stickiness(False)
         
         # Get currently pressed keys for continuous movement
         keys_pressed = pygame.key.get_pressed()
@@ -127,10 +132,10 @@ class RacingGame:
         
         # Render controls instructions
         instructions = [
-            "Player 1: WASD to move",
-            "Player 2: Arrow keys to move",
-            "U/J: Adjust turn speed",
-            "I/K: Adjust acceleration",
+            "Player 1: WASD to move (S to reverse)",
+            "Player 2: Arrow keys to move (↓ to reverse)",
+            "U/J: Adjust turn speed | I/K: Adjust acceleration",
+            "O/L: Adjust wall stickiness",
         ]
         
         for i, instruction in enumerate(instructions):
@@ -143,20 +148,37 @@ class RacingGame:
             stats_text = [
                 f"P1 Turn Speed: {car.turn_speed:.2f}",
                 f"P1 Acceleration: {car.acceleration:.2f}",
+                f"P1 Reversing: {'Yes' if car.is_reversing else 'No'}",
+                f"Wall Stickiness: {game_settings.wall_stickiness:.2f}",
             ]
             
             for i, stat in enumerate(stats_text):
-                text_surface = font.render(stat, True, COLORS['YELLOW'])
+                if i == 2 and car.is_reversing:
+                    color = COLORS['RED']
+                elif i == 3:
+                    color = COLORS['GREEN']
+                else:
+                    color = COLORS['YELLOW']
+                text_surface = font.render(stat, True, color)
                 self.screen.blit(text_surface, (10, 150 + i * 30))
+        
+        # Show reverse status for Player 2
+        if len(self.cars) > 1:
+            car2 = self.cars[1]
+            if car2.is_reversing:
+                text_surface = font.render("P2 Reversing: Yes", True, COLORS['RED'])
+                self.screen.blit(text_surface, (10, 270))
     
     def run(self) -> None:
         """Run the main game loop."""
         print("Starting Racing Game...")
         print("Controls:")
-        print("  Player 1: WASD")
-        print("  Player 2: Arrow Keys")
+        print("  Player 1: WASD (S for reverse)")
+        print("  Player 2: Arrow Keys (↓ for reverse)")
         print("  U/J: Adjust Player 1 turn speed")
         print("  I/K: Adjust Player 1 acceleration")
+        print("  O/L: Adjust wall stickiness")
+        print("Cars start facing up. White lights indicate reverse gear.")
         
         while self.running:
             # Handle events and input

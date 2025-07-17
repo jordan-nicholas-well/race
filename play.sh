@@ -21,6 +21,12 @@ if [ ! -f "track1_visual.png" ] || [ ! -f "track1_mask.png" ]; then
     python create_track.py
 fi
 
+# Check if car sprites exist
+if [ ! -f "car_sports.png" ] || [ ! -f "car_truck.png" ]; then
+    echo "🚗 Creating car sprites..."
+    python create_sprites.py
+fi
+
 # Launch the game
 echo "🚀 Starting the racing game..."
 echo ""

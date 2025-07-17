@@ -8,9 +8,15 @@ A modular, multiplayer top-down racing game built with Python and Pygame.
 - **Modular code structure** with clear separation of concerns
 - **High-resolution track system** using visual and mask images
 - **Realistic car physics** with customizable parameters
+- **Car sprites** with proper rotation and visual details
+- **Reverse functionality** - cars can reverse with proper steering
+- **Advanced collision detection** with intelligent wall sliding
+- **Adjustable wall stickiness** - control how much cars stick to walls
 - **Runtime physics adjustments** for fine-tuning gameplay
 - **Multiple car types** with different handling characteristics
-- **Collision detection** with walls and slow-down areas
+- **Smart collision system** - cars slow down and slide along walls instead of stopping
+- **Visual indicators** - reverse lights when backing up
+- **Proper starting orientation** - cars face the correct direction at start
 
 ## Installation
 
@@ -69,22 +75,24 @@ Create these two PNG files in the game directory:
 ## Controls
 
 ### Player 1 (Red Sports Car)
-- **W**: Accelerate
+- **W**: Accelerate forward
 - **S**: Brake/Reverse
 - **A**: Turn Left
 - **D**: Turn Right
 
 ### Player 2 (Blue Truck)
-- **↑**: Accelerate
+- **↑**: Accelerate forward
 - **↓**: Brake/Reverse
 - **←**: Turn Left
 - **→**: Turn Right
 
-### Physics Adjustments (Player 1 only)
-- **U**: Increase turn speed
-- **J**: Decrease turn speed
-- **I**: Increase acceleration
-- **K**: Decrease acceleration
+### Physics Adjustments (Global)
+- **U**: Increase turn speed (Player 1)
+- **J**: Decrease turn speed (Player 1)
+- **I**: Increase acceleration (Player 1)
+- **K**: Decrease acceleration (Player 1)
+- **O**: Increase wall stickiness (affects both players)
+- **L**: Decrease wall stickiness (affects both players)
 
 ## Running the Game
 
@@ -113,7 +121,8 @@ This project is fully configured for VS Code development:
 - **🎮 Run Racing Game** - Start the main game
 - **🧪 Test Game Components** - Run component tests
 - **🛣️ Create Sample Track** - Generate track images
-- **📦 Install Dependencies** - Install Python packages
+- **� Create Car Sprites** - Generate car sprite images
+- **�📦 Install Dependencies** - Install Python packages
 - **🐍 Setup Python Environment** - Create virtual environment
 
 ### From Command Line
@@ -131,16 +140,29 @@ python main.py
 ## Game Mechanics
 
 ### Car Physics
-- **Acceleration**: How quickly cars gain speed
-- **Max Speed**: Top speed limit for each car
-- **Friction**: How quickly cars slow down when not accelerating
-- **Turn Speed**: How sharply cars can turn
+- **Forward/Reverse**: Cars can move forward and backward with realistic acceleration
+- **Speed Limiting**: Reverse speed is limited to 50% of forward speed
+- **Turn Speed**: Cars turn better at higher speeds, with reversed steering when reversing
+- **Friction**: Cars naturally slow down when not accelerating
+- **Sprite Rotation**: Cars visually rotate to face their movement direction
+
+### Advanced Collision System
+- **Wall Detection**: Multiple collision points around each car
+- **Smart Collision Response**: Cars slow down and slide along walls
+- **Angle-Based Impact**: Collision severity depends on impact angle
+- **Automatic Recovery**: Cars find safe positions when stuck
+- **Adjustable Stickiness**: Control how much cars stick to walls (0.0 = no stick, 1.0 = very sticky)
 
 ### Track Surfaces
 - **Black areas**: Normal drivable track
-- **White areas**: Walls (cars crash and reset to start)
+- **White areas**: Walls (cars slow down and slide when hit, depending on stickiness setting)
 - **Green areas**: Slow-down zones (reduced max speed)
-- **Blue dots**: Starting positions
+- **Blue dots**: Starting positions (cars face upward initially)
+
+### Visual Indicators
+- **Car Sprites**: Detailed car graphics with proper rotation
+- **Reverse Lights**: White dots appear at the back of cars when reversing
+- **Real-time Stats**: On-screen display of car status and settings
 
 ### Car Types
 - **Sports Car (Player 1)**: Fast acceleration, high top speed, good turning

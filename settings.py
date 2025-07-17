@@ -38,9 +38,9 @@ SPORTS_CAR: Dict[str, Any] = {
     'max_speed': 8.0,
     'friction': 0.95,
     'turn_speed': 4.0,
-    'image_path': None,  # We'll use colored rectangles
+    'image_path': 'car_sports.png',
     'color': COLORS['RED'],
-    'size': (20, 12),
+    'size': (24, 14),
 }
 
 TRUCK: Dict[str, Any] = {
@@ -48,9 +48,9 @@ TRUCK: Dict[str, Any] = {
     'max_speed': 6.0,
     'friction': 0.93,
     'turn_speed': 2.5,
-    'image_path': None,  # We'll use colored rectangles
+    'image_path': 'car_truck.png',
     'color': COLORS['BLUE'],
-    'size': (24, 16),
+    'size': (28, 18),
 }
 
 # Default car stats (can be modified at runtime)
@@ -60,12 +60,18 @@ DEFAULT_CAR_STATS: Dict[str, Any] = SPORTS_CAR.copy()
 PHYSICS_ADJUSTMENT: Dict[str, float] = {
     'turn_speed_increment': 0.2,
     'acceleration_increment': 0.05,
+    'stickiness_increment': 0.1,
     'max_adjustment': 2.0,  # Maximum multiplier for adjustments
     'min_adjustment': 0.2,  # Minimum multiplier for adjustments
 }
 
 # Slow-down effect settings
 SLOW_DOWN_MULTIPLIER: float = 0.5  # Speed reduction when on slow-down areas
+
+# Wall collision settings
+WALL_STICKINESS: float = 0.4  # How much cars stick to walls (0.0 = no stick, 1.0 = very sticky)
+WALL_BOUNCE_FACTOR: float = 0.6  # How much velocity is retained after wall collision
+REVERSE_SPEED_MULTIPLIER: float = 0.5  # Speed multiplier when reversing
 
 # Track settings
 TRACK_FILES: Dict[str, str] = {

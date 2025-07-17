@@ -74,6 +74,29 @@
 			"detail": "🛣️ Generate sample track images (track1_visual.png and track1_mask.png)"
 		},
 		{
+			"label": "Create Car Sprites",
+			"type": "shell",
+			"command": "${workspaceFolder}/.venv/bin/python",
+			"args": [
+				"create_sprites.py"
+			],
+			"group": "build",
+			"isBackground": false,
+			"problemMatcher": [],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "new",
+				"showReuseMessage": true,
+				"clear": false
+			},
+			"detail": "🚗 Generate car sprite images for all car types"
+		},
+		{
 			"label": "Install Dependencies",
 			"type": "shell",
 			"command": "${workspaceFolder}/.venv/bin/python",

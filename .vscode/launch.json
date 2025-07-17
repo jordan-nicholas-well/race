@@ -27,10 +27,21 @@
             "stopOnEntry": false
         },
         {
-            "name": "🛣️ Debug Track Creator",
+            "name": "� Debug Track Creator",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/create_track.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {},
+            "python": "${workspaceFolder}/.venv/bin/python",
+            "stopOnEntry": false
+        },
+        {
+            "name": "🎨 Debug Sprite Creator",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/create_sprites.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "env": {},

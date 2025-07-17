@@ -29,4 +29,6 @@ PHYSICS_CONTROLS: Dict[str, int] = {
     'decrease_turn_speed': pygame.K_j,
     'increase_acceleration': pygame.K_i,
     'decrease_acceleration': pygame.K_k,
+    'increase_stickiness': pygame.K_o,
+    'decrease_stickiness': pygame.K_l,
 }
