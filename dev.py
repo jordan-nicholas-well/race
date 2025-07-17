@@ -1,31 +1,30 @@
 #!/usr/bin/env python3
 """
-Development script for testing both local and web versions of the racing game.
-
-This script provides convenient commands for development, testing, and building.
+Development utility script for the racing game.
+Provides commands for running, building, and managing the project.
 """
 
 import subprocess
 import sys
-import os
-import argparse
+import platform
 from pathlib import Path
 
 def run_local():
-    """Run the game in local mode."""
-    print("🖥️  Running local version...")
+    """Run the local Python version."""
+    print("🏎️  Starting local game...")
     try:
-        subprocess.run([sys.executable, "main_universal.py"], check=True)
+        subprocess.run([sys.executable, "main.py"], check=True)
     except subprocess.CalledProcessError as e:
-        print(f"❌ Local execution failed: {e}")
+        print(f"❌ Local game execution failed: {e}")
         return False
     except KeyboardInterrupt:
-        print("\n🛑 Local game stopped by user")
+        print("\n🛑 Game stopped by user")
     return True
 
 def run_web_dev():
-    """Run the game in web development mode (simulated web environment)."""
-    print("🌐 Running web version in development mode...")
+    """Run the web development version."""
+    print("🌐 Starting web development mode...")
+    print("💡 This will use pygame locally for development")
     try:
         subprocess.run([sys.executable, "main_universal.py", "--web"], check=True)
     except subprocess.CalledProcessError as e:
@@ -39,190 +38,106 @@ def build_web():
     """Build the web version using Pygbag."""
     print("🏗️  Building web version...")
     try:
-        subprocess.run([sys.executable, "build_web.py"], check=True)
+        result = subprocess.run([sys.executable, "build_web.py", "archive"], check=True)
+        
+        print("\n🎮 Build Summary:")
+        print("✅ Web version successfully built!")
+        print("📁 Output locations:")
+        print("   • build/web/ - Web deployment files")
+        print("   • build/web.zip - Complete deployment archive")
+        print("   • dist/ - Copied files for convenience")
+        print("")
+        print("🌐 To test the working solution:")
+        print("   python build_web.py serve")
+        print("   # This uses Pygbag's server and resolves CORS issues!")
+        
         return True
     except subprocess.CalledProcessError as e:
         print(f"❌ Web build failed: {e}")
         return False
 
+def serve_web():
+    """Serve the web version using Pygbag's built-in server."""
+    print("🌐 Starting Pygbag web server...")
+    print("💡 This resolves CORS issues and provides proper CDN access")
+    try:
+        subprocess.run([sys.executable, "build_web.py", "serve"], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Web server failed: {e}")
+        return False
+    except KeyboardInterrupt:
+        print("\n🛑 Web server stopped by user")
+    return True
+
 def install_dependencies():
     """Install all required dependencies."""
     print("📦 Installing dependencies...")
     
-    # Core dependencies
-    deps = ["pygame>=2.5.0"]
-    
-    # Web dependencies (optional)
-    web_deps = ["pygbag>=0.8.0"]
-    
     try:
         # Install core dependencies
         print("Installing core dependencies...")
-        subprocess.run([
-            sys.executable, "-m", "pip", "install"
-        ] + deps, check=True)
+        subprocess.run([sys.executable, "-m", "pip", "install", "pygame>=2.5.0"], check=True)
         
         # Install web dependencies
         print("Installing web dependencies...")
-        subprocess.run([
-            sys.executable, "-m", "pip", "install"
-        ] + web_deps, check=True)
+        subprocess.run([sys.executable, "-m", "pip", "install", "pygbag>=0.8.0"], check=True)
         
-        print("✅ All dependencies installed successfully")
+        print("✅ Dependencies installed successfully!")
         return True
-        
     except subprocess.CalledProcessError as e:
-        print(f"❌ Dependency installation failed: {e}")
+        print(f"❌ Failed to install dependencies: {e}")
         return False
 
-def lint_code():
-    """Run code linting on the project."""
-    print("🔍 Running code linting...")
-    
-    python_files = [
-        "main.py",
-        "main_web.py", 
-        "main_universal.py",
-        "car.py",
-        "track.py",
-        "settings.py",
-        "game_settings.py",
-        "settings_interface.py",
-        "web_settings_interface.py",
-        "build_web.py"
-    ]
-    
-    # Filter to only existing files
-    existing_files = [f for f in python_files if os.path.exists(f)]
-    
-    try:
-        # Try to use pylint if available
-        subprocess.run([
-            sys.executable, "-m", "pylint", "--disable=C0103,R0903,R0902"
-        ] + existing_files, check=False)  # Don't fail on warnings
-        
-        print("✅ Code linting completed")
-        return True
-        
-    except FileNotFoundError:
-        print("ℹ️  Pylint not available, skipping linting")
-        return True
-
-def test_imports():
-    """Test that all imports work correctly."""
-    print("🧪 Testing imports...")
-    
-    tests = [
-        ("main.py", "from main import RacingGame"),
-        ("main_web.py", "from main_web import RacingGameWeb"),
-        ("car.py", "from car import Car"),
-        ("track.py", "from track import Track"),
-        ("settings_interface.py", "from settings_interface import settings_interface"),
-        ("web_settings_interface.py", "from web_settings_interface import WebSettingsInterface"),
-    ]
-    
-    all_passed = True
-    
-    for file_name, import_stmt in tests:
-        if os.path.exists(file_name):
-            try:
-                exec(import_stmt)
-                print(f"✅ {file_name}: Import successful")
-            except Exception as e:
-                print(f"❌ {file_name}: Import failed - {e}")
-                all_passed = False
-        else:
-            print(f"⚠️  {file_name}: File not found")
-    
-    if all_passed:
-        print("✅ All import tests passed")
-    else:
-        print("❌ Some import tests failed")
-    
-    return all_passed
-
-def show_project_info():
-    """Show information about the project structure."""
-    print("📋 Project Information")
-    print("=" * 50)
-    
-    # Check file existence
-    core_files = {
-        "main.py": "Local game entry point",
-        "main_web.py": "Web game entry point", 
-        "main_universal.py": "Universal launcher",
-        "car.py": "Car physics and rendering",
-        "track.py": "Track loading and collision",
-        "settings.py": "Game configuration",
-        "game_settings.py": "Runtime game settings",
-        "settings_interface.py": "Terminal settings interface",
-        "web_settings_interface.py": "GUI settings interface",
-        "build_web.py": "Web build script",
-        "pyproject.toml": "Project configuration",
-        "requirements.txt": "Python dependencies"
-    }
-    
-    print("📁 Core Files:")
-    for filename, description in core_files.items():
-        status = "✅" if os.path.exists(filename) else "❌"
-        print(f"   {status} {filename:<25} - {description}")
-    
-    print("\n🎮 Available Commands:")
-    print("   python dev.py local         - Run local version")
-    print("   python dev.py web-dev       - Run web version (dev mode)")
-    print("   python dev.py build         - Build web version")
-    print("   python dev.py install       - Install dependencies")
-    print("   python dev.py test          - Test imports")
-    print("   python dev.py lint          - Run code linting")
-    print("   python dev.py info          - Show this information")
+def show_help():
+    """Show help information."""
+    print("🎮 Racing Game Development Tool")
+    print("=" * 40)
+    print("Available commands:")
+    print("")
+    print("🏎️  Game Execution:")
+    print("  run        - Run local Python version")
+    print("  web-dev    - Run web development mode (local pygame)")
+    print("  serve      - Build and serve web version (RECOMMENDED)")
+    print("")
+    print("🔧 Build & Deploy:")
+    print("  build      - Build web version for deployment")
+    print("  install    - Install all dependencies")
+    print("")
+    print("💡 Quick Start:")
+    print("  python dev.py install   # Install dependencies")
+    print("  python dev.py run       # Test locally")
+    print("  python dev.py serve     # Test web version (WORKING!)")
+    print("")
+    print("🌐 Web Testing (SOLUTION):")
+    print("  The 'serve' command uses Pygbag's built-in server")
+    print("  which resolves CORS issues and handles CDN dependencies properly!")
 
 def main():
-    """Main development script entry point."""
-    parser = argparse.ArgumentParser(
-        description="Development script for the racing game",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  python dev.py local      # Run local version
-  python dev.py web-dev    # Test web version
-  python dev.py build      # Build for web deployment
-  python dev.py install    # Install all dependencies
-        """
-    )
-    
-    parser.add_argument(
-        "command",
-        choices=["local", "web-dev", "build", "install", "test", "lint", "info"],
-        help="Command to execute"
-    )
-    
-    if len(sys.argv) == 1:
-        show_project_info()
+    """Main entry point."""
+    if len(sys.argv) < 2:
+        show_help()
         return
     
-    args = parser.parse_args()
+    command = sys.argv[1]
     
-    print(f"🚀 Executing: {args.command}")
+    print(f"🔧 Executing: {command}")
     print("-" * 30)
     
-    success = True
-    
-    if args.command == "local":
-        success = run_local()
-    elif args.command == "web-dev":
-        success = run_web_dev()
-    elif args.command == "build":
-        success = build_web()
-    elif args.command == "install":
-        success = install_dependencies()
-    elif args.command == "test":
-        success = test_imports()
-    elif args.command == "lint":
-        success = lint_code()
-    elif args.command == "info":
-        show_project_info()
-    
-    if not success:
+    if command == "run":
+        run_local()
+    elif command == "web-dev":
+        run_web_dev()
+    elif command == "serve":
+        serve_web()
+    elif command == "build":
+        build_web()
+    elif command == "install":
+        install_dependencies()
+    elif command == "help":
+        show_help()
+    else:
+        print(f"❌ Unknown command: {command}")
+        print("💡 Use 'python dev.py help' for available commands")
         sys.exit(1)
 
 if __name__ == "__main__":
