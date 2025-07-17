@@ -1,6 +1,6 @@
-# 2D Racing Game
+# 🏎️ Racing Game - Dual Platform Edition
 
-A modular, multiplayer top-down racing game built with Python and Pygame.
+A multiplayer racing game that runs seamlessly in both **local Python environments** and **web browsers** through advanced dual-compatibility architecture.
 
 ## Features
 

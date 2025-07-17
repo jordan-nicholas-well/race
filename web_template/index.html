@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Racing Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        
+        .game-container {
+            max-width: 1024px;
+            margin: 0 auto;
+        }
+        
+        .controls-info {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #2a2a2a;
+            border-radius: 8px;
+        }
+        
+        .controls-info h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        
+        .control-row {
+            display: flex;
+            justify-content: space-around;
+            margin: 10px 0;
+        }
+        
+        .player-controls {
+            background-color: #3a3a3a;
+            padding: 10px;
+            border-radius: 5px;
+            flex: 1;
+            margin: 0 10px;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        
+        canvas {
+            border: 2px solid #444;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🏎️ Racing Game</h1>
+        
+        <div class="controls-info">
+            <h3>Game Controls</h3>
+            <div class="control-row">
+                <div class="player-controls">
+                    <h4>Player 1 (Sports Car)</h4>
+                    <p>WASD Keys</p>
+                    <p>W/S: Accelerate/Brake</p>
+                    <p>A/D: Turn Left/Right</p>
+                </div>
+                <div class="player-controls">
+                    <h4>Player 2 (Truck)</h4>
+                    <p>Arrow Keys</p>
+                    <p>↑/↓: Accelerate/Brake</p>
+                    <p>←/→: Turn Left/Right</p>
+                </div>
+            </div>
+            <p><strong>TAB:</strong> Toggle Settings Menu | <strong>ESC:</strong> Quit Game</p>
+        </div>
+        
+        <div id="pygame-container">
+            <!-- Pygame canvas will be inserted here -->
+        </div>
+        
+        <div class="loading-text">
+            <p>🌐 Loading game... Please wait</p>
+            <p><em>The game will start automatically once loaded</em></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "racing-game"
+version = "1.0.0"
+description = "A multiplayer racing game that runs both locally and in web browsers"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pygame>=2.5.0",
+]
+
+[project.optional-dependencies]
+web = [
+    "pygbag>=0.8.0",
+]
+dev = [
+    "pygbag>=0.8.0",
+    "black",
+    "pylint",
+]
+
+[tool.pygbag]
+# Web deployment configuration
+archive = false
+icon = "assets/icon.png"
+template = "custom"
+cdn = "https://cdn.jsdelivr.net/pyodide/"
+width = 1024
+height = 768
+title = "Racing Game"
+author = "Game Developer"
+homepage = "https://github.com/yourusername/racing-game"
+itch = false
+cdn_pygame = true
+
+# Performance optimizations
+optimize = true
+asyncio = true
+gil = 0
+
+# Asset handling
+include_assets = [
+    "assets/",
+    "car_images/",
+    "sounds/",
+    "*.py",
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+
+[tool.pylint]
+max-line-length = 88
