@@ -36,10 +36,11 @@ The racing game now includes a powerful CLI (Command Line Interface) settings in
 - **Turn Speed**: How quickly the car turns (1.0 - 8.0)
   - Default: 4.00
   - Increment: 0.2
-- **Friction**: How much the car slows down naturally (0.80 - 0.99)
-  - Default: 0.950
+- **Friction**: Surface friction/resistance (0.01 - 0.20)
+  - Default: 0.05
   - Increment: 0.01
-  - Higher = more resistance, slower deceleration
+  - **Lower values** = Less friction (ice-like, cars coast longer)
+  - **Higher values** = More friction (grippy surface, faster stopping)
 
 ### Player 2 Settings  
 - **Acceleration**: How quickly the car speeds up (0.1 - 1.0)
@@ -51,10 +52,11 @@ The racing game now includes a powerful CLI (Command Line Interface) settings in
 - **Turn Speed**: How quickly the car turns (1.0 - 8.0)
   - Default: 2.50
   - Increment: 0.2
-- **Friction**: How much the car slows down naturally (0.80 - 0.99)
-  - Default: 0.930
+- **Friction**: Surface friction/resistance (0.01 - 0.20)
+  - Default: 0.07
   - Increment: 0.01
-  - Higher = more resistance, slower deceleration
+  - **Lower values** = Less friction (ice-like, cars coast longer)
+  - **Higher values** = More friction (grippy surface, faster stopping)
 
 ### Global Settings
 - **Wall Stickiness**: How much cars stick to walls when colliding (0.0 - 1.0)
@@ -82,7 +84,7 @@ The racing game now includes a powerful CLI (Command Line Interface) settings in
 ### Making Cars Faster
 - Increase **Max Speed** for higher top speed
 - Increase **Acceleration** for quicker acceleration
-- Decrease **Friction** for less resistance (coasts longer)
+- **Decrease Friction** for less resistance (cars coast longer on ice-like surfaces)
 
 ### Making Cars More Responsive
 - Increase **Acceleration** for faster response to input
@@ -90,15 +92,20 @@ The racing game now includes a powerful CLI (Command Line Interface) settings in
 - Adjust **Wall Stickiness** lower for smoother wall interactions
 
 ### Making Cars More Stable
-- Increase **Friction** for better control and stopping
+- **Increase Friction** for better control and faster stopping (grippy surfaces)
 - Decrease **Turn Speed** for more gradual, stable turns
 - Increase **Wall Stickiness** if cars slide off track too easily
 
+### Realistic Physics Simulation
+- **Low Friction** (0.01-0.05): Ice, wet surfaces - cars slide and coast
+- **Medium Friction** (0.06-0.12): Normal road conditions
+- **High Friction** (0.13-0.20): Racing tires on grip-enhanced surfaces
+
 ### Balancing Players
 - Adjust settings for each player independently
-- Player 1 (Sports Car) starts with higher speed and better handling
-- Player 2 (Truck) starts with more stability but lower performance
-- Fine-tune **Friction** and **Turn Speed** for different driving experiences
+- Player 1 (Sports Car) starts with lower friction (sportier, more slidey)
+- Player 2 (Truck) starts with higher friction (more stable, grippier)
+- Fine-tune **Friction** and **Turn Speed** together for different driving experiences
 
 ## Technical Details
 
@@ -106,6 +113,7 @@ The racing game now includes a powerful CLI (Command Line Interface) settings in
 - Console interface runs in a separate thread from the game
 - All changes are temporary (reset when game restarts)
 - Terminal settings are automatically restored when exiting
+- **Friction Physics**: Lower values = higher velocity retention (realistic)
 
 ## Troubleshooting
 
@@ -113,6 +121,11 @@ The racing game now includes a powerful CLI (Command Line Interface) settings in
 - Make sure the terminal/console window has focus
 - Try pressing arrow keys gently (not holding down)
 - If stuck, press 'q' to quit settings interface
+
+### Interface Misaligned
+- The interface now uses proper carriage returns (\r)
+- Should display correctly in all terminals
+- If still having issues, try resizing terminal window
 
 ### Game Performance
 - The CLI interface uses minimal CPU
@@ -124,12 +137,12 @@ The racing game now includes a powerful CLI (Command Line Interface) settings in
 1. Start game: `python main.py`
 2. Use ↓ arrow to select "P1 Max Speed"
 3. Use → arrow multiple times to increase to 12.00
-4. Use ↓ arrow to select "P1 Turn Speed"  
-5. Use ← arrow to decrease to 3.00 for more stable handling
+4. Use ↓ arrow to select "P1 Friction"  
+5. Use ← arrow to decrease to 0.02 for ice-like sliding
 6. Use ↓ arrow to select "Wall Stickiness"
-7. Use ← arrow to decrease to 0.20 for smoother wall sliding
+7. Use ← arrow to decrease to 0.10 for smoother wall sliding
 8. Switch to game window and test the changes
-9. Return to settings to fine-tune **Friction** for perfect feel
+9. Return to settings to increase **P1 Friction** to 0.08 for better control
 10. Press 'q' when done adjusting settings
 
-The settings interface provides immediate feedback and allows for precise tuning of the game experience!
+The settings interface now provides realistic friction physics where lower values create slippery, ice-like conditions and higher values create grippy, racing-tire conditions!

@@ -26,7 +26,7 @@ class SettingsInterface:
         self.current_selection: int = 0
         self.cars: List[Any] = []  # Will be set by the main game
         
-        # Settings configuration
+        # Settings configuration with realistic friction values
         self.settings: List[Dict[str, Any]] = [
             {
                 'name': 'P1 Acceleration',
@@ -54,10 +54,10 @@ class SettingsInterface:
             },
             {
                 'name': 'P1 Friction',
-                'current_value': lambda: self.cars[0].friction if self.cars else 0.95,
-                'adjust': lambda delta: self._adjust_car_setting(0, 'friction', delta),
-                'min_value': 0.8,
-                'max_value': 0.99,
+                'current_value': lambda: self._get_friction_display(0),
+                'adjust': lambda delta: self._adjust_car_friction(0, delta),
+                'min_value': 0.01,
+                'max_value': 0.20,
                 'increment': 0.01,
             },
             {
@@ -86,10 +86,10 @@ class SettingsInterface:
             },
             {
                 'name': 'P2 Friction',
-                'current_value': lambda: self.cars[1].friction if len(self.cars) > 1 else 0.93,
-                'adjust': lambda delta: self._adjust_car_setting(1, 'friction', delta),
-                'min_value': 0.8,
-                'max_value': 0.99,
+                'current_value': lambda: self._get_friction_display(1),
+                'adjust': lambda delta: self._adjust_car_friction(1, delta),
+                'min_value': 0.01,
+                'max_value': 0.20,
                 'increment': 0.01,
             },
             {
@@ -101,6 +101,9 @@ class SettingsInterface:
                 'increment': 0.1,
             },
         ]
+        
+        # Store friction display values (realistic physics)
+        self.friction_display = [0.05, 0.07]  # P1: 0.05 (sporty), P2: 0.07 (stable)
         
         # Terminal settings for raw input
         self.old_settings = None
@@ -147,6 +150,56 @@ class SettingsInterface:
         except:
             pass
         return ''
+    
+    def _get_friction_display(self, car_index: int) -> float:
+        """
+        Get the friction display value (realistic physics).
+        
+        Args:
+            car_index: Index of the car (0 or 1)
+            
+        Returns:
+            Friction display value (0.01-0.20 range)
+        """
+        if car_index < len(self.friction_display):
+            return self.friction_display[car_index]
+        return 0.05 if car_index == 0 else 0.07
+    
+    def _adjust_car_friction(self, car_index: int, delta: float) -> None:
+        """
+        Adjust a car's friction setting with realistic physics.
+        
+        Args:
+            car_index: Index of the car (0 or 1)
+            delta: Amount to adjust by
+        """
+        # Ensure friction_display has enough elements
+        while len(self.friction_display) <= car_index:
+            self.friction_display.append(0.05)
+        
+        # Get friction setting configuration
+        friction_config = None
+        for config in self.settings:
+            if ((car_index == 0 and config['name'] == 'P1 Friction') or
+                (car_index == 1 and config['name'] == 'P2 Friction')):
+                friction_config = config
+                break
+        
+        if friction_config:
+            # Update display value
+            current_value = self.friction_display[car_index]
+            new_value = current_value + delta
+            new_value = max(friction_config['min_value'], 
+                          min(friction_config['max_value'], new_value))
+            self.friction_display[car_index] = new_value
+            
+            # Convert to car friction (lower friction value = higher velocity retention)
+            car_friction = 1.0 - new_value
+            
+            # Apply to car
+            if car_index < len(self.cars):
+                car = self.cars[car_index]
+                setattr(car, 'friction', car_friction)
     
     def _adjust_car_setting(self, car_index: int, setting: str, delta: float) -> None:
         """
@@ -199,13 +252,14 @@ class SettingsInterface:
         print('\033[2J\033[H', end='', flush=True)
     
     def _display_interface(self) -> None:
-        """Display the settings interface."""
+        """Display the settings interface with proper formatting."""
         self._clear_screen()
         
-        print("🎮 RACING GAME - SETTINGS INTERFACE")
-        print("=" * 60)
-        print("Navigation: ↑/↓ select, ←/→ adjust, 'q' quit")
-        print()
+        # Header with proper carriage returns
+        print("\r🎮 RACING GAME - SETTINGS INTERFACE")
+        print("\r" + "=" * 60)
+        print("\rNavigation: ↑/↓ select, ←/→ adjust, 'q' quit")
+        print("\r")
         
         for i, setting in enumerate(self.settings):
             # Selection indicator
@@ -214,7 +268,7 @@ class SettingsInterface:
             # Get current value
             try:
                 current_val = setting['current_value']()
-                if setting['name'] == 'P1 Friction' or setting['name'] == 'P2 Friction':
+                if setting['name'] in ['P1 Friction', 'P2 Friction']:
                     value_str = f"{current_val:.3f}"
                 else:
                     value_str = f"{current_val:.2f}"
@@ -222,20 +276,26 @@ class SettingsInterface:
                 value_str = "N/A"
             
             # Display range
-            if setting['name'] == 'P1 Friction' or setting['name'] == 'P2 Friction':
+            if setting['name'] in ['P1 Friction', 'P2 Friction']:
                 range_str = f"[{setting['min_value']:.2f}-{setting['max_value']:.2f}]"
             else:
                 range_str = f"[{setting['min_value']:.1f}-{setting['max_value']:.1f}]"
             
+            # Format line with proper alignment and carriage return
+            name_field = f"{setting['name']:<16}"
+            value_field = f"{value_str:>6}"
+            
             # Color coding for selected item
             if i == self.current_selection:
-                print(f"{indicator}\033[93m{setting['name']:<16}\033[0m: \033[92m{value_str:>6}\033[0m {range_str}")
+                line = f"\r{indicator}\033[93m{name_field}\033[0m: \033[92m{value_field}\033[0m {range_str}"
             else:
-                print(f"{indicator}{setting['name']:<16}: {value_str:>6} {range_str}")
+                line = f"\r{indicator}{name_field}: {value_field} {range_str}"
+            
+            print(line)
         
-        print()
-        print("=" * 60)
-        print("Game: WASD (P1), Arrows (P2) | Changes apply instantly!")
+        print("\r")
+        print("\r" + "=" * 60)
+        print("\rGame: WASD (P1), Arrows (P2) | Changes apply instantly!")
     
     def _run_interface(self) -> None:
         """Main interface loop."""
