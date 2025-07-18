@@ -1,0 +1,105 @@
+name: Deploy Racing Game to GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pygame>=2.5.0
+          pip install pygbag>=0.8.0
+
+      - name: Build web version
+        run: |
+          python -m pygbag \
+            --archive \
+            --cdn https://pygame-web.github.io/archives/0.9/ \
+            --name "Racing Game" \
+            --icon favicon.png \
+            main.py
+
+      - name: Prepare deployment files
+        run: |
+          # Create deployment directory
+          mkdir -p deployment
+
+          # Copy web build files
+          if [ -d "build/web" ]; then
+            cp -r build/web/* deployment/
+          elif [ -d "dist" ]; then
+            cp -r dist/* deployment/
+          else
+            echo "Error: No build output found"
+            exit 1
+          fi
+
+          # Create a simple index redirect if needed
+          if [ ! -f "deployment/index.html" ]; then
+            echo "<!DOCTYPE html>
+            <html>
+            <head>
+              <title>Racing Game</title>
+              <meta http-equiv=\"refresh\" content=\"0;url=./main.html\">
+            </head>
+            <body>
+              <p>Loading Racing Game... <a href=\"./main.html\">Click here if not redirected</a></p>
+            </body>
+            </html>" > deployment/index.html
+          fi
+
+          # List deployment contents for debugging
+          echo "Deployment contents:"
+          ls -la deployment/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./deployment
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2

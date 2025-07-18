@@ -51,9 +51,24 @@ python dev.py build
 
 ## 🌐 Web Deployment
 
-1. Build the web version: `python dev.py build`
-2. Copy `build/web/` contents to your web host
-3. Deploy to GitHub Pages, itch.io, or any static hosting
+### Automatic GitHub Pages Deployment
+
+This repository includes a GitHub Actions workflow that automatically builds and deploys to GitHub Pages:
+
+1. **Enable GitHub Pages**:
+
+   - Go to your repository Settings → Pages
+   - Set Source to "GitHub Actions"
+   - The game will auto-deploy on every push to main/master
+
+2. **Manual deployment**: `python dev.py build` then copy `build/web/` contents to your web host
+
+3. **Other platforms**: Deploy to itch.io, Netlify, or any static hosting
+
+### 🔗 Access Your Game
+
+After deployment, your game will be available at:
+`https://[username].github.io/[repository-name]/`
 
 ## 🔧 Development
 
@@ -61,6 +76,12 @@ python dev.py build
 - **Web testing**: `python dev.py serve`
 - **Clean project**: `python dev.py clean`
 - **Help**: `python dev.py help`
+
+### 🚀 Continuous Deployment
+
+- **GitHub Actions**: Automatically builds and deploys on push to main/master
+- **Workflow file**: `.github/workflows/deploy.yml`
+- **Requirements**: Enable GitHub Pages with "GitHub Actions" source
 
 The web version uses Pygbag to compile Python/pygame to WebAssembly for browser compatibility.
 
