@@ -37,7 +37,7 @@ SPORTS_CAR: Dict[str, Any] = {
     'acceleration': 0.3,
     'max_speed': 8.0,
     'friction': 0.95,
-    'turn_speed': 4.0,
+    'turn_speed': 6.0,
     'image_path': 'car_sports.png',
     'color': COLORS['RED'],
     'size': (24, 14),
@@ -47,7 +47,7 @@ TRUCK: Dict[str, Any] = {
     'acceleration': 0.2,
     'max_speed': 6.0,
     'friction': 0.93,
-    'turn_speed': 2.5,
+    'turn_speed': 5.0,
     'image_path': 'car_truck.png',
     'color': COLORS['BLUE'],
     'size': (28, 18),
@@ -75,6 +75,6 @@ REVERSE_SPEED_MULTIPLIER: float = 0.5  # Speed multiplier when reversing
 
 # Track settings
 TRACK_FILES: Dict[str, str] = {
-    'visual': 'track1_visual.png',
-    'mask': 'track1_mask.png',
+    'visual': 'track2_visual.png',
+    'mask': 'track2_mask.png',
 }

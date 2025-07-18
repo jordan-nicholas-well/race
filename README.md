@@ -23,11 +23,13 @@ python dev.py build
 ## 📁 Project Structure
 
 **Core Files:**
+
 - `main_desktop.py` - Desktop version with full features
 - `main.py` - Web-compatible version for browsers
 - `dev.py` - Development tool (replaces all other scripts)
 
 **Game Components:**
+
 - `car.py` - Car physics and controls
 - `track.py` - Track loading and collision detection
 - `settings.py` - Game configuration
@@ -35,6 +37,7 @@ python dev.py build
 - `game_settings.py` - Runtime settings management
 
 **Assets:**
+
 - `car_*.png` - Car sprite images
 - `track1_visual.png` - Track background
 - `track1_mask.png` - Collision detection mask
@@ -69,7 +72,7 @@ Generate new tracks and car sprites:
 # Create track images
 python create_track.py
 
-# Create car sprites  
+# Create car sprites
 python create_sprites.py
 ```
 
