@@ -57,7 +57,7 @@ def build_web_version_with_server():
     print("📋 Press Ctrl+C to stop the server when done testing")
     
     # Try different ports if 8080 is busy
-    ports_to_try = [8080, 8081, 8082, 8083, 8084]
+    ports_to_try = [8000, 8080, 8081, 8082, 8083, 8084]
     
     for port in ports_to_try:
         try:
@@ -151,7 +151,7 @@ The racing game web deployment is **fully functional** using Pygbag's built-in s
 ```bash
 python build_web.py serve
 ```
-This builds and serves the game with Pygbag's server on http://localhost:8080
+This builds and serves the game with Pygbag's server on http://localhost:8000
 
 #### Option 2: Build Archive for Deployment
 ```bash

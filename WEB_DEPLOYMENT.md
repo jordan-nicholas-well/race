@@ -10,7 +10,7 @@ The racing game web deployment is **fully functional** using Pygbag's built-in s
 ```bash
 python build_web.py serve
 ```
-This builds and serves the game with Pygbag's server on http://localhost:8080
+This builds and serves the game with Pygbag's server on http://localhost:8000
 
 #### Option 2: Build Archive for Deployment
 ```bash

@@ -129,12 +129,36 @@ async def main():
     
     print("\n👋 Thanks for playing!")
 
-if __name__ == "__main__":
-    # Handle both sync and async execution
+def run_main():
+    """Run the main function with proper event loop handling."""
+    env_type = detect_execution_environment()
+    
     try:
-        # Try to run with asyncio (required for web)
-        asyncio.run(main())
-    except AttributeError:
-        # Fallback for older Python versions
+        # Check if we're already in an event loop
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(main())
+        if loop.is_running():
+            # We're in a running event loop (common in web environments)
+            print("🔄 Event loop already running, scheduling coroutine...")
+            # Create a task and let it run
+            task = asyncio.create_task(main())
+            return task
+        else:
+            # No running loop, safe to use asyncio.run
+            asyncio.run(main())
+    except RuntimeError as e:
+        if "cannot be called from a running event loop" in str(e):
+            # We're definitely in a running loop, use ensure_future
+            print("🔄 Detected running event loop, using ensure_future...")
+            asyncio.ensure_future(main())
+        else:
+            # Some other runtime error, try the fallback
+            try:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                loop.run_until_complete(main())
+            except Exception as fallback_error:
+                print(f"❌ Failed to run game: {fallback_error}")
+                sys.exit(1)
+
+if __name__ == "__main__":
+    run_main()

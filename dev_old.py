@@ -57,8 +57,8 @@ def build_web():
         print("   • dist/ - Web deployment files")
         print("   • build/web.zip - Complete deployment archive")
         print("\n🌐 Quick test commands:")
-        print("   python -m http.server 8000 --directory dist")
-        print("   # Then open http://localhost:8000")
+        print("   python -m http.server 8080 --directory dist")
+        print("   # Then open http://localhost:8080")
         
         return True
     except subprocess.CalledProcessError as e:
