@@ -48,7 +48,7 @@ jobs:
           python -m pygbag \
             --archive \
             --cdn https://pygame-web.github.io/archives/0.9/ \
-            --name "Racing Game" \
+            --app_name "Racing Game" \
             --icon favicon.png \
             main.py
 
